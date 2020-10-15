@@ -29,6 +29,7 @@
 		#Request.meta_vars#
 
 		<script language="JavaScript1.2" src="js/MathAndStringExtend.js" type="text/javascript"></script>
+		<script language="JavaScript1.2" src="js/DHTMLWindows_obj.js" type="text/javascript"></script>
 
 		<script language="JavaScript1.2" type="text/javascript" src="core/engine.js"></script>
 		<script language="JavaScript1.2" type='text/javascript' src='core/util.js'></script>
@@ -46,7 +47,7 @@
 			/**************************************************************************/
 
 			function performTerminateAccount() {
-				var objUserName = $('user_user_terminate_account_UserName'); 
+				var objUserName = getGUIObjectInstanceById('user_user_terminate_account_UserName'); 
 				if (objUserName != null) { 
 					disableAllChildrenForObjById('div_user_terminate_account', true);
 					DWREngine._execute(_cfscriptLocation, null, 'PerformTerminateAccount', objUserName.value, handlePerformTerminateAccountResults);
@@ -56,7 +57,7 @@
 			function _handlePerformTerminateAccountResults(anObject) {
 			//	debugAjaxObject(anObject, true);
 				disableAllChildrenForObjById('div_user_terminate_account', false);
-				var mObj = $('span_user_terminate_account_status_message');
+				var mObj = getGUIObjectInstanceById('span_user_terminate_account_status_message');
 				if (mObj != null) {
 					flushGUIObjectChildrenForObj(mObj);
 					var bool = ((anObject[0].ISACCOUNTTERMINATED.trim().toUpperCase() == 'FALSE') ? false : true);

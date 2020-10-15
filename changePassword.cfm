@@ -35,6 +35,7 @@
 		#Request.meta_vars#
 
 		<script language="JavaScript1.2" src="js/MathAndStringExtend.js" type="text/javascript"></script>
+		<script language="JavaScript1.2" src="js/DHTMLWindows_obj.js" type="text/javascript"></script>
 
 		<script language="JavaScript1.2" type="text/javascript" src="core/engine.js"></script>
 		<script language="JavaScript1.2" type='text/javascript' src='core/util.js'></script>
@@ -56,13 +57,13 @@
 				var bool_isOtherPasswordPresent = (sOther != null);
 				var bool_isOtherPasswordValid = (((bool_isOtherPasswordPresent) && (s == sOther)) ? true : false);
 				var ap = -1;
-				var cObj1 = $('user_user_change_password_newPassword');
-				var cObj2 = $('user_user_change_password_confirmPassword');
+				var cObj1 = getGUIObjectInstanceById('user_user_change_password_newPassword');
+				var cObj2 = getGUIObjectInstanceById('user_user_change_password_confirmPassword');
 				var bool_shallSubmitBtnBeDisabled = true;
 				var bool_passwordsMatches = false;
 
-				var cObj = $((bool_isOtherPasswordPresent) ? 'span_password_matches' : 'span_password_rating');
-				var tdObj = $((bool_isOtherPasswordPresent) ? 'td_password_matches' : 'td_password_rating');
+				var cObj = getGUIObjectInstanceById((bool_isOtherPasswordPresent) ? 'span_password_matches' : 'span_password_rating');
+				var tdObj = getGUIObjectInstanceById((bool_isOtherPasswordPresent) ? 'td_password_matches' : 'td_password_rating');
 				if (bool_isPasswordValid) {
 					// rate the password...
 					ap = analyzePassword(s);
@@ -121,7 +122,7 @@
 				}
 
 				if ( (bool_shallSubmitBtnBeDisabled == false) || (bool_passwordsMatches == false) ) {
-					var mObj = $('span_user_change_password_status_message');
+					var mObj = getGUIObjectInstanceById('span_user_change_password_status_message');
 					if (mObj != null) {
 					//	flushGUIObjectChildrenForObj(mObj);
 						if (bool_isOtherPasswordValid == false) {
@@ -134,7 +135,7 @@
 					disableWidgetByID('user_user_change_password_btn_getPassword', true);
 					return true;
 				} else {
-					var mObj = $('span_user_change_password_status_message');
+					var mObj = getGUIObjectInstanceById('span_user_change_password_status_message');
 					if (mObj != null) {
 						flushGUIObjectChildrenForObj(mObj);
 						mObj.innerHTML = '';
@@ -147,9 +148,9 @@
 			}
 
 			function performSetNewPassword() {
-				var objUserName = $('user_user_change_password_UserName'); 
-				var objNewPassword = $('user_user_change_password_newPassword'); 
-				var objConfirmPassword = $('user_user_change_password_confirmPassword'); 
+				var objUserName = getGUIObjectInstanceById('user_user_change_password_UserName'); 
+				var objNewPassword = getGUIObjectInstanceById('user_user_change_password_newPassword'); 
+				var objConfirmPassword = getGUIObjectInstanceById('user_user_change_password_confirmPassword'); 
 				if ( (objUserName != null) && (objNewPassword != null) && (objConfirmPassword != null) ) { 
 					if (objNewPassword.value == objConfirmPassword.value) {
 						disableAllChildrenForObjById('div_user_change_password', true);
@@ -163,7 +164,7 @@
 			function _handlePerformSetNewPasswordResults(anObject) {
 			//	debugAjaxObject(anObject, true);
 				disableAllChildrenForObjById('div_user_change_password', false);
-				var mObj = $('span_user_change_password_status_message');
+				var mObj = getGUIObjectInstanceById('span_user_change_password_status_message');
 				if (mObj != null) {
 					flushGUIObjectChildrenForObj(mObj);
 					var bool = ((anObject[0].ISPASSWORDACCEPTED.trim().toUpperCase() == 'FALSE') ? false : true);
@@ -186,7 +187,7 @@
 				DWRUtil.useLoadingMessage();
 				DWREngine._errorHandler =  errorHandler;
 
-				var mObj = $('user_user_change_password_newPassword');
+				var mObj = getGUIObjectInstanceById('user_user_change_password_newPassword');
 				if (mObj != null) {
 					mObj.focus();
 				}
@@ -244,7 +245,7 @@
 															<span class="boldPromptTextClass"><NOBR>Confirm Password:</NOBR></span>&nbsp;<span title="The data entry field is Required." class="errorStatusBoldClass">(*)</span>
 														</td>
 														<td>
-															<input type="password" name="user_user_change_password_confirmPassword" id="user_user_change_password_confirmPassword" size="30" maxlength="50" class="textClass" onkeyup="var obj = $('user_user_change_password_newPassword'); otherValue = ''; if (obj != null) { otherValue = obj.value; }; return validatePassword(this.value, otherValue);">
+															<input type="password" name="user_user_change_password_confirmPassword" id="user_user_change_password_confirmPassword" size="30" maxlength="50" class="textClass" onkeyup="var obj = getGUIObjectInstanceById('user_user_change_password_newPassword'); otherValue = ''; if (obj != null) { otherValue = obj.value; }; return validatePassword(this.value, otherValue);">
 														</td>
 														<td id="td_password_matches" width="100px" align="center" style="border: thin solid silver;">
 															<div id="div_password_matches"><span id="span_password_matches" class="normalStatusBoldClass">(Does Not Match)</span></div>
@@ -272,6 +273,15 @@
 				</tr>
 			</table>
 		</div>
+	
+		<script language="JavaScript1.2" type="text/javascript">
+		<!--
+			var aDHTMLObj1 = DHTMLWindowsObj.getInstance();
+			var aDHTMLObj2 = DHTMLWindowsObj.getInstance();
+			var t = aDHTMLObj1.asHTML() + aDHTMLObj2.asHTML();
+			document.write(t);
+		// --> 
+		</script>
 	</body>
 	</html>
 </cfoutput>

@@ -14,7 +14,7 @@
 				<script language="JavaScript1.2" type="text/javascript">
 				<!--
 					function objectCreator_getGUIObjectInstanceById(id) {
-						return $(id);
+						return getGUIObjectInstanceById(id);
 					}
 
 					function objectCreator_getSelectionsFromObj(obj) {
@@ -101,13 +101,9 @@
 											</td>
 											<td align="left">
 												<cfscript>
-													if (IsDefined("Request.qGetDbSchemaForObjectName")) {
-														metrics = fieldMetricsFromQuery(Request.qGetDbSchemaForObjectName);
-													}
+													metrics = fieldMetricsFromQuery(Request.qGetDbSchemaForObjectName);
 												</cfscript>
-												<cfif (IsDefined("metrics.size")) AND (IsDefined("metrics.maxlength"))>
-													<input disabled type="text" name="wwNewObjectName" id="wwNewObjectName" class="textClass" size="#metrics.size#" maxlength="#metrics.maxlength#">
-												</cfif>
+												<input disabled type="text" name="wwNewObjectName" id="wwNewObjectName" class="textClass" size="#metrics.size#" maxlength="#metrics.maxlength#">
 											</td>
 										</tr>
 										<tr>
@@ -116,13 +112,9 @@
 											</td>
 											<td align="left">
 												<cfscript>
-													if (IsDefined("Request.qGetDbSchemaForPublishedVersion")) {
-														metrics = fieldMetricsFromQuery(Request.qGetDbSchemaForPublishedVersion);
-													}
+													metrics = fieldMetricsFromQuery(Request.qGetDbSchemaForPublishedVersion);
 												</cfscript>
-												<cfif (IsDefined("metrics.size")) AND (IsDefined("metrics.maxlength"))>
-													<input disabled type="text" name="wwNewPublishedVersion" id="wwNewPublishedVersion" class="textClass" size="#metrics.size#" maxlength="#metrics.maxlength#">
-												</cfif>
+												<input disabled type="text" name="wwNewPublishedVersion" id="wwNewPublishedVersion" class="textClass" size="#metrics.size#" maxlength="#metrics.maxlength#">
 											</td>
 										</tr>
 										<tr>
@@ -131,13 +123,9 @@
 											</td>
 											<td align="left">
 												<cfscript>
-													if (IsDefined("Request.qGetDbSchemaForEditVersion")) {
-														metrics = fieldMetricsFromQuery(Request.qGetDbSchemaForEditVersion);
-													}
+													metrics = fieldMetricsFromQuery(Request.qGetDbSchemaForEditVersion);
 												</cfscript>
-												<cfif (IsDefined("metrics.size")) AND (IsDefined("metrics.maxlength"))>
-													<input disabled type="text" name="wwNewEditVersion" id="wwNewEditVersion" class="textClass" size="#metrics.size#" maxlength="#metrics.maxlength#">
-												</cfif>
+												<input disabled type="text" name="wwNewEditVersion" id="wwNewEditVersion" class="textClass" size="#metrics.size#" maxlength="#metrics.maxlength#">
 											</td>
 										</tr>
 										<tr>
@@ -146,13 +134,9 @@
 											</td>
 											<td align="left">
 												<cfscript>
-													if (IsDefined("Request.qGetDbSchemaForCreatedBy")) {
-														metrics = fieldMetricsFromQuery(Request.qGetDbSchemaForCreatedBy);
-													}
+													metrics = fieldMetricsFromQuery(Request.qGetDbSchemaForCreatedBy);
 												</cfscript>
-												<cfif (IsDefined("metrics.size")) AND (IsDefined("metrics.maxlength"))>
-													<input disabled type="text" name="wwNewCreatedBy" id="wwNewCreatedBy" class="textClass" size="#metrics.size#" maxlength="#metrics.maxlength#">
-												</cfif>
+												<input disabled type="text" name="wwNewCreatedBy" id="wwNewCreatedBy" class="textClass" size="#metrics.size#" maxlength="#metrics.maxlength#">
 											</td>
 										</tr>
 									</table>
@@ -242,13 +226,9 @@
 											</td>
 											<td align="left">
 												<cfscript>
-													if (IsDefined("Request.qGetDbSchemaForAttributeName")) {
-														metrics = fieldMetricsFromQuery(Request.qGetDbSchemaForAttributeName);
-													}
+													metrics = fieldMetricsFromQuery(Request.qGetDbSchemaForAttributeName);
 												</cfscript>
-												<cfif (IsDefined("metrics.size")) AND (IsDefined("metrics.maxlength"))>
-													<input disabled type="text" name="wwNewAttributeName" id="wwNewAttributeName" class="textClass" size="#metrics.size#" maxlength="#metrics.maxlength#">
-												</cfif>
+												<input disabled type="text" name="wwNewAttributeName" id="wwNewAttributeName" class="textClass" size="#metrics.size#" maxlength="#metrics.maxlength#">
 											</td>
 										</tr>
 										<tr>
@@ -257,29 +237,21 @@
 											</td>
 											<td align="left">
 												<cfscript>
-													metricsValueString = StructNew();
-													if (IsDefined("Request.qGetDbSchemaForAttributeValueString")) {
-														metricsValueString = fieldMetricsFromQuery(Request.qGetDbSchemaForAttributeValueString);
-													}
-													metricsValueText = StructNew();
-													if (IsDefined("Request.qGetDbSchemaForAttributeValueText")) {
-														metricsValueText = fieldMetricsFromQuery(Request.qGetDbSchemaForAttributeValueText);
-													}
+													metricsValueString = fieldMetricsFromQuery(Request.qGetDbSchemaForAttributeValueString);
+													metricsValueText = fieldMetricsFromQuery(Request.qGetDbSchemaForAttributeValueText);
 													bool_useTextArea = false;
 													metrics = metricsValueString;
-													if ( (IsDefined("metricsValueString.maxlength")) AND (IsDefined("metricsValueText.maxlength")) ) {
-														if (Max(metricsValueString.maxlength, metricsValueText.maxlength) gt 7000) {
-															bool_useTextArea = true;
-														} else {
-															if (metricsValueText.maxlength eq Min(metricsValueString.maxlength, metricsValueText.maxlength)) {
-																metrics = metricsValueText;
-															}
+													if (Max(metricsValueString.maxlength, metricsValueText.maxlength) gt 7000) {
+														bool_useTextArea = true;
+													} else {
+														if (metricsValueText.maxlength eq Min(metricsValueString.maxlength, metricsValueText.maxlength)) {
+															metrics = metricsValueText;
 														}
 													}
 												</cfscript>
 												<cfif (bool_useTextArea)>
 													<textarea disabled cols="50" rows="10" name="wwNewAttributeValue" id="wwNewAttributeValue" class="textClass"></textarea>
-												<cfelseif (IsDefined("metrics.size")) AND (IsDefined("metrics.maxlength"))>
+												<cfelse>
 													<input disabled type="text" name="wwNewAttributeValue" id="wwNewAttributeValue" class="textClass" size="#metrics.size#" maxlength="#metrics.maxlength#">
 												</cfif>
 											</td>
@@ -290,13 +262,9 @@
 											</td>
 											<td align="left">
 												<cfscript>
-													if (IsDefined("Request.qGetDbSchemaForCreatedBy")) {
-														metrics = fieldMetricsFromQuery(Request.qGetDbSchemaForCreatedBy);
-													}
+													metrics = fieldMetricsFromQuery(Request.qGetDbSchemaForCreatedBy);
 												</cfscript>
-												<cfif (IsDefined("metrics.size")) AND (IsDefined("metrics.maxlength"))>
-													<input disabled type="text" name="wwNewAttributeCreatedBy" id="wwNewAttributeCreatedBy" class="textClass" size="#metrics.size#" maxlength="#metrics.maxlength#">
-												</cfif>
+												<input disabled type="text" name="wwNewAttributeCreatedBy" id="wwNewAttributeCreatedBy" class="textClass" size="#metrics.size#" maxlength="#metrics.maxlength#">
 											</td>
 										</tr>
 									</table>

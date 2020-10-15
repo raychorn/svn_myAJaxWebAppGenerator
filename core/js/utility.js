@@ -23,7 +23,7 @@ function focusOnWidget(obj) {
 }
 
 function focusOnWidgetByID(id) {
-	return focusOnWidget($(id));
+	return focusOnWidget(getGUIObjectInstanceById(id));
 }
 
 function setObjectDisplayStyleForObj(obj, bool) {
@@ -33,7 +33,7 @@ function setObjectDisplayStyleForObj(obj, bool) {
 }
 
 function setObjectDisplayStyleById(id, bool) {
-	return setObjectDisplayStyleForObj($(id), bool);
+	return setObjectDisplayStyleForObj(getGUIObjectInstanceById(id), bool);
 }
 
 function innerHTMLForObj(obj, sContent) {
@@ -43,11 +43,11 @@ function innerHTMLForObj(obj, sContent) {
 }
 
 function innerHTMLForObjByID(id, sContent) {
-	return innerHTMLForObj($(id), sContent);
+	return innerHTMLForObj(getGUIObjectInstanceById(id), sContent);
 }
 
 function toggleObjectDisplayStyleById(id) {
-	var obj = $(id); 
+	var obj = getGUIObjectInstanceById(id); 
 	if (obj != null) { 
 		obj.style.display = ((obj.style.display == const_none_style) ? const_inline_style : const_none_style); 
 	}
@@ -61,7 +61,7 @@ function disableWidget(obj, bool) {
 
 function disableWidgetByID(id, bool) {
 	var obj = -1;
-	obj = $(id);
+	obj = getGUIObjectInstanceById(id);
 	disableWidget(obj, bool);
 }
 
@@ -85,7 +85,7 @@ function disableWidgetsFromDict(aDict) {
 	if (aDict.getKeys) {
 		var keys = aDict.getKeys();
 		for (i = 0; i < keys.length; i++) {
-			disableWidget($(keys[i]), aDict.getValueFor(keys[i]));
+			disableWidget(getGUIObjectInstanceById(keys[i]), aDict.getValueFor(keys[i]));
 		}
 	}
 }
@@ -104,7 +104,7 @@ function disableAllChildrenForObj(obj, bool) {
 
 function disableAllChildrenForObjById(id, bool) {
 	bool = ((bool == false) ? false : true);
-	var obj = $(id);
+	var obj = getGUIObjectInstanceById(id);
 	if (obj != null) { 
 		disableAllChildrenForObj(obj, bool);
 	}
@@ -127,7 +127,7 @@ function disabledChildrenForObj(obj) {
 }
 
 function disabledChildrenForObjById(id) {
-	var obj = $(id);
+	var obj = getGUIObjectInstanceById(id);
 	if (obj != null) { 
 		return disabledChildrenForObj(obj);
 	}
@@ -141,7 +141,7 @@ function setTitleForObj(obj, t) {
 }
 
 function setTitleForObjById(id, t) {
-	setTitleForObj($(id), t);
+	setTitleForObj(getGUIObjectInstanceById(id), t);
 }
 
 function getTitleForObj(obj) {
@@ -151,7 +151,7 @@ function getTitleForObj(obj) {
 }
 
 function getTitleForObjById(id) {
-	return getTitleForObj($(id));
+	return getTitleForObj(getGUIObjectInstanceById(id));
 }
 
 function selectionsSetSelectedUsingObj(obj, bool) {
@@ -165,7 +165,7 @@ function selectionsSetSelectedUsingObj(obj, bool) {
 }
 
 function selectionsSetSelectedById(id, bool) {
-	return selectionsSetSelectedUsingObj($(id), bool);
+	return selectionsSetSelectedUsingObj(getGUIObjectInstanceById(id), bool);
 }
 
 function selectionsFirstSelectedUsingObj(obj, bool) {
@@ -178,7 +178,7 @@ function selectionsFirstSelectedUsingObj(obj, bool) {
 }
 
 function selectionsFirstSelectedById(id, bool) {
-	return selectionsFirstSelectedUsingObj($(id), bool);
+	return selectionsFirstSelectedUsingObj(getGUIObjectInstanceById(id), bool);
 }
 
 function selectionsItemSelectedForObj(obj, text, bool_textOrValue) {
@@ -215,7 +215,7 @@ function selectionsItemSelectedForObj(obj, text, bool_textOrValue) {
 }
 
 function selectionsItemSelectedById(id, value, bool_textOrValue) {
-	return selectionsItemSelectedForObj($(id), value, bool_textOrValue);
+	return selectionsItemSelectedForObj(getGUIObjectInstanceById(id), value, bool_textOrValue);
 }
 
 function copySelectionsFromObj2Obj(sObj, dObj, exFunc) {
@@ -238,7 +238,7 @@ function copySelectionsFromObj2Obj(sObj, dObj, exFunc) {
 }
 
 function copySelectionsFromObj2ObjById(sId, dId) {
-	return copySelectionsFromObj2Obj($(sId), $(DId));
+	return copySelectionsFromObj2Obj(getGUIObjectInstanceById(sId), getGUIObjectInstanceById(DId));
 }
 
 function _getSelectionsFromObj(obj) {
@@ -283,15 +283,15 @@ function _getTextFromSelectionObjByValue(obj, value) {
 }
 
 function _getTextFromSelectionObjIdByValue(id, value) {
-	return _getTextFromSelectionObjByValue($(id), value);
+	return _getTextFromSelectionObjByValue(getGUIObjectInstanceById(id), value);
 }
 
 function _getSelectionsFromObjByID(id) {
-	return _getSelectionsFromObj($(id));
+	return _getSelectionsFromObj(getGUIObjectInstanceById(id));
 }
 
 function removeAllOptionsByID(id) {
-	var mObj = $(id);
+	var mObj = getGUIObjectInstanceById(id);
 	if (mObj != null) {
 		while (mObj.options.length > 0) {
 			mObj.options[0] = null;
@@ -301,7 +301,7 @@ function removeAllOptionsByID(id) {
 
 function setLinearOptionsByID(id, alpha, omega) {
 	var i = -1;
-	var mObj = $(id);
+	var mObj = getGUIObjectInstanceById(id);
 	if (mObj != null) {
 		for (i = alpha; i <= omega; i++) {
 			o = new Option(i, i);
@@ -311,7 +311,7 @@ function setLinearOptionsByID(id, alpha, omega) {
 }
 
 function AddAnOptionByID(id, value, text) {
-	var mObj = $(id);
+	var mObj = getGUIObjectInstanceById(id);
 	if (mObj != null) {
 		o = new Option(text, value);
 		mObj.options[mObj.options.length] = o;
@@ -354,7 +354,7 @@ function handlePossibleSQLError(anObject, func) {
 	}
 	if (bool_isError) {
 		if (1) {
-			_alert(_msg);
+			DHTMLWindowsObj.loadwindow(aDHTMLObj2.id,'debugAjaxObject.cfm?nocache=' + uuid() + '&isError=true' + '&message=' + URLEncode(_msg),790,350,Math.floor((clientWidth() - 790) / 2),Math.floor((clientHeight() - 350) / 2));
 		} else {
 			debugAjaxObject(anObject, true);
 		}
@@ -423,8 +423,8 @@ function processSelectPrevNextPage(divName, pgNum, rowPerPage, bool_direction, p
 	var caObj2 = '';
 
 	for (i = 1; i <= rowPerPage; i++) {
-		cObj1 = $(divName + pgNum + '.' + i);
-		cObj2 = $(divName + (pgNum + delta) + '.' + i);
+		cObj1 = getGUIObjectInstanceById(divName + pgNum + '.' + i);
+		cObj2 = getGUIObjectInstanceById(divName + (pgNum + delta) + '.' + i);
 
 		if ( (cObj1 != null) && (cObj2 != null) ) {
 			cObj1.style.display = const_none_style;
@@ -432,8 +432,8 @@ function processSelectPrevNextPage(divName, pgNum, rowPerPage, bool_direction, p
 		}
 	}
 
-	caObj1 = $(divName + pgNum + '.' + rowPerPage + 'a');
-	caObj2 = $(divName + (pgNum + delta) + '.' + rowPerPage + 'a');
+	caObj1 = getGUIObjectInstanceById(divName + pgNum + '.' + rowPerPage + 'a');
+	caObj2 = getGUIObjectInstanceById(divName + (pgNum + delta) + '.' + rowPerPage + 'a');
 	if ( (caObj1 != null) && (caObj2 != null) ) {
 		caObj1.style.display = const_none_style;
 		caObj2.style.display = const_inline_style;
@@ -488,7 +488,7 @@ function fetchDataFromGridSpans(divName, ar) {
 	
 //	_db += 'spanPrefix = [' + spanPrefix + ']' + ', ar.length = [' + ar.length + ']' + '\n' + 'ar = [' + ar + ']';
 	for (i = 0; i < ar.length; i++) {
-		cObj = $(spanPrefix + '_' + ar[i]);
+		cObj = getGUIObjectInstanceById(spanPrefix + '_' + ar[i]);
 		if (cObj != null) {
 			v = cObj.innerHTML.stripHTML();
 			oDict.push(cObj.id, v);
@@ -541,10 +541,10 @@ function copyDataIntoFORMUsing(_fDict, _oDict, _divEditor, b_isDelete) {
 		if (arVal.length > 1) {
 			arDate = val.split('/');
 			for (k = 0; k < arVal.length; k++) {
-				cObj = $(arVal[k]);
+				cObj = getGUIObjectInstanceById(arVal[k]);
 				wName2 = cObj.id;
 				wName2 = wName2.clipCaselessReplace(repName, _divEditor);
-				dObj = $(wName2);
+				dObj = getGUIObjectInstanceById(wName2);
 				if ( (cObj != null) && (dObj != null) ) {
 					if (cObj.type.toUpperCase() == const_text_symbol.toUpperCase()) {
 						dObj.value = val;
@@ -572,10 +572,10 @@ function copyDataIntoFORMUsing(_fDict, _oDict, _divEditor, b_isDelete) {
 				}
 			}
 		} else {
-			cObj = $(wName);
+			cObj = getGUIObjectInstanceById(wName);
 			wName2 = cObj.id;
 			wName2 = wName2.clipCaselessReplace(repName, _divEditor);
-			dObj = $(wName2);
+			dObj = getGUIObjectInstanceById(wName2);
 			if ( (cObj != null) && (dObj != null) ) {
 				if (cObj.type.toUpperCase() == const_text_symbol.toUpperCase()) {
 					dObj.value = val;
@@ -598,7 +598,7 @@ function popHilitedObjects(aDict) {
 	var arIDs = ((aDict.getKeys) ? aDict.getKeys() : []);
 
 	for (i = 0; i < arIDs.length; i++) {
-		cObj = $(arIDs[i]);
+		cObj = getGUIObjectInstanceById(arIDs[i]);
 		if (cObj != null) {
 			cObj.innerHTML = aDict.getValueFor(cObj.id);
 		}
@@ -651,7 +651,7 @@ function prepFORMvalues(divName, dictSpec, divPrefix, divEditor, bool_isDelete) 
 	popHilitedObjects(_dict_hilited_objects);
 	_dict_hilited_objects = DictonaryObj.getInstance();
 	for (j = 0; j < keys1.length; j++) {
-		cObj = $(keys1[j]);
+		cObj = getGUIObjectInstanceById(keys1[j]);
 		if (cObj != null) {
 			_dict_hilited_objects.push(cObj.id, cObj.innerHTML);
 			cObj.innerHTML = '<u>' + cObj.innerHTML + '</u>';  // highlight the selected record...
@@ -678,7 +678,7 @@ function performCheckUser(id) {
 	
 	initCheckUserFor(id);
 
-	var cbObj = $(id);
+	var cbObj = getGUIObjectInstanceById(id);
 	if (cbObj != null) {
 		bool = _dict_checked_objects.getValueFor(id);
 		cbObj.checked = ((bool) ? true : false);
@@ -691,7 +691,7 @@ function performCheckAllUsers(id) {
 	var ar = _dict_checked_objects.getKeys();
 
 	for (i = 0; i < ar.length; i++) {
-		cbObj = $(ar[i]);
+		cbObj = getGUIObjectInstanceById(ar[i]);
 		if (cbObj != null) {
 			cbObj.checked = ((_dict_checked_objects.getValueFor(cbObj.id) == true) ? false : true);
 			_dict_checked_objects.put(cbObj.id, cbObj.checked);
@@ -905,7 +905,7 @@ function popupConfirmationDialog(callbackFunc) {
 	var t = typeof callbackFunc;
 	if (t.toUpperCase() == const_function_symbol.toUpperCase()) {
 		_cache_confirmation_dialog_actions['btn_confirmation_dialog_confirm'] = callbackFunc;
-		cObj = $('div_confirmation_dialog');
+		cObj = getGUIObjectInstanceById('div_confirmation_dialog');
 		if (cObj != null) {
 			setObjectDisplayStyleForObj(cObj, true);
 			innerHTMLForObjByID('span_confirmation_dialog_title', 'Confirm Delete All');

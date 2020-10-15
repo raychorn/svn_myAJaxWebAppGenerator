@@ -2,9 +2,9 @@ function errorHandler(message) {
 	$('disabledZone').style.visibility = 'hidden';
 	var jsee = jsErrorExplainer(message, 'errorHandler()', false);
     if (typeof message == "object" && message.name == "Error" && message.description) {
-        _alert("(errorHandler.1) Error: " + message.description + '\n' + 'jsErrorExplainer = [' + jsee + ']');
+        alert("(errorHandler.1) Error: " + message.description + '\n' + 'jsErrorExplainer = [' + jsee + ']');
     } else {
-        _alert('(errorHandler.1) ' + message + '\n' + 'jsErrorExplainer = [' + jsee + ']');
+        alert('(errorHandler.1) ' + message + '\n' + 'jsErrorExplainer = [' + jsee + ']');
     }
 };
 

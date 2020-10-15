@@ -171,19 +171,19 @@ function startToolTipWatcherProcess() {
 function handle_ToolTip_MouseOver(ev, id, parked_id) {
 	var adjustedX = false;
 	var adjustedY = false;
-	var obj = $(id);
+	var obj = getGUIObjectInstanceById(id);
 	if (obj != null) {
 		var xPos_m = -1;
 		var yPos_m = -1; // master x,y position for the tooltips if the anchor is defined...
 		if ( (parked_id != null) && (parked_id.trim().length > 0) ) {
-			var _tt_obj = $(parked_id);
+			var _tt_obj = getGUIObjectInstanceById(parked_id);
 			if (_tt_obj != null) {
 				var m_coord = getAnchorPosition(parked_id);
 				xPos_m = m_coord.x;
 				yPos_m = m_coord.y; // master x,y position for the tooltips if the anchor is defined...
 			}
 		}
-		var tt_obj = $('_delayed_tooltips');
+		var tt_obj = getGUIObjectInstanceById('_delayed_tooltips');
 		if (tt_obj != null) {
 			var _clientHeight = clientHeight();
 			var _clientWidth = clientWidth();
@@ -231,9 +231,9 @@ function handle_ToolTip_MouseOver(ev, id, parked_id) {
 }
 
 function handle_ToolTip_MouseOut(ev, id) {
-	var obj = $(id);
+	var obj = getGUIObjectInstanceById(id);
 	if ( (obj != null) && (_cache_tooltips[id] != null) ) {
-		var tt_obj = $('_delayed_tooltips');
+		var tt_obj = getGUIObjectInstanceById('_delayed_tooltips');
 		if (tt_obj != null) {
 			// obj.title = _cache_tooltips[id];
 			_stack_tooltips_obj.pop(); // flush the stack - also need to kill the background process at this point...
@@ -316,16 +316,16 @@ function flushGUIObjectChildrenForObj(obj) {
 	}
 }
 
-function _$(id) {
+function _getGUIObjectInstanceById(id) {
 	var obj = -1;
 	obj = ((document.getElementById) ? document.getElementById(id) : ((document.all) ? document.all[id] : ((document.layers) ? document.layers[id] : null)));
 	return obj;
 }
 
-function $(id) {
+function getGUIObjectInstanceById(id) {
 	var obj = -1;
 	if (_cache_gui_objects[id] == null) {
-		obj = _$(id);
+		obj = _getGUIObjectInstanceById(id);
 		_cache_gui_objects[id] = obj;
 	} else {
 		obj = _cache_gui_objects[id];
@@ -344,7 +344,7 @@ function setFocusSafely(pObj) {
 }
 
 function setFocusSafelyById(id) {
-	var pObj = $(id);
+	var pObj = getGUIObjectInstanceById(id);
 	return setFocusSafely(pObj);
 }
 
@@ -501,7 +501,7 @@ function jsErrorExplainer(e, funcName, bool_useAlert) {
 	_db += "e.name is: " + e.name + '\n'; 
 	_db += "e.message is: " + e.message + '\n';
 	msg = funcName + '\n' + e.toString() + '\n' + _db;
-	if (bool_useAlert) _alert(msg);
+	if (bool_useAlert) alert(msg);
 	return msg;
 }
 
