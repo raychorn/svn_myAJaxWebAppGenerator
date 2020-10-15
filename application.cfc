@@ -1,185 +1,181 @@
 <cfcomponent>
 
-	<cffunction name="cf_log" access="public">
-		<cfargument name="_someText_" type="string" required="yes">
-		
-		<cflog file="#Application.applicationName#" type="Information" text="#_someText_#">
-	</cffunction>
+	<cfinclude template="includes/cfinclude_explainError.cfm">
+	<cfinclude template="includes/cfinclude_cflog.cfm">
+	<cfinclude template="includes/cfinclude_cfdump.cfm">
 
 	<cfscript>
 		path = GetDirectoryFromPath(GetBaseTemplatePath());
 		sitePrefix = ListGetAt(path, ListLen(path, "\"), "\");
 		iniPath = path & sitePrefix & ".ini";
-		if (NOT FileExists(iniPath)) {
-			SetProfileString(iniPath, CGI.SERVER_NAME, 'AppName', 'Geonosis_v1');
-			SetProfileString(iniPath, CGI.SERVER_NAME, 'DNS', 'CMS');
-			SetProfileString(iniPath, CGI.SERVER_NAME, 'LOCALE', 'EN');
-			SetProfileString(iniPath, CGI.SERVER_NAME, 'CLIENTSTORAGE', 'clientvars');
-		}
+		SetProfileString(iniPath, CGI.SERVER_NAME, 'AppName', 'Geonosis_v1');
+		SetProfileString(iniPath, CGI.SERVER_NAME, 'DSN', 'CMS');
+		SetProfileString(iniPath, CGI.SERVER_NAME, 'LOCALE', 'EN');
+		SetProfileString(iniPath, CGI.SERVER_NAME, 'CLIENTSTORAGE', 'clientvars');
 
 		sAppName = sitePrefix & '_' & GetProfileString(iniPath, CGI.SERVER_NAME, 'AppName');
-		sDNS = GetProfileString(iniPath, CGI.SERVER_NAME, 'DNS');
+		sDSN = GetProfileString(iniPath, CGI.SERVER_NAME, 'DSN');
 		sLOCALE = GetProfileString(iniPath, CGI.SERVER_NAME, 'LOCALE');
 		sCLIENTSTORAGE = GetProfileString(iniPath, CGI.SERVER_NAME, 'CLIENTSTORAGE');
 	</cfscript>
 	
 	<cfscript>
-		This.name = sAppName;
-		This.clientmanagement = "Yes";
-		This.Sessionmanagement = "Yes";
-		This.sessiontimeout = "#CreateTimeSpan(0,8,0,0)#";
-		This.applicationtimeout = "#CreateTimeSpan(1,0,0,0)#";
-		This.clientstorage = 'clientvars';
-		This.loginstorage = "session";
-		This.setclientcookies = "Yes";
-		This.setdomaincookies = "No";
-		This.scriptprotect = "All";
+		if (NOT IsDefined("This.name")) {
+			aa = ListToArray(CGI.SCRIPT_NAME, '/');
+			subName = aa[1];
+			if (Len(subName) gt 0) {
+				subName = '_' & subName;
+			}
+
+			myAppName = right(reReplace(CGI.SERVER_NAME & subName, "[^a-zA-Z]","_","all"), 64);
+			myAppName = ArrayToList(ListToArray(myAppName, '_'), '_');
+			This.name = UCASE(myAppName);
+		}
+		This.clientManagement = "Yes";
+		This.sessionManagement = "Yes";
+		This.sessionTimeout = "#CreateTimeSpan(0,1,0,0)#";
+		This.applicationTimeout = "#CreateTimeSpan(1,0,0,0)#";
+		This.clientStorage = "clientvars";
+		This.loginStorage = "session";
+		This.setClientCookies = "Yes";
+		This.setDomainCookies = "No";
+		This.scriptProtect = "All";
 		
-		this.const_SQL_DSNs = sDNS;
+		this.const_SQL_DSNs = sDSN;
 		this.count_SQL_DSNs = 1;
 
 		this.sLOCALE = sLOCALE;
 		this.path = path;
+	</cfscript>
+	
+	<cffunction name="onError">
+	   <cfargument name="Exception" required=true/>
+	   <cfargument type="String" name="EventName" required=true/>
 
-		function onError(Exception, EventName) {
-			var commonCode = -1;
-			var err_commonCode = false;
-			var err_commonCodeMsg = '';
+	   <cfscript>
 			var errorExplanation = '';
-			
-			if (IsDefined("commonCode")) {
-				err_commonCode = false;
-				err_commonCodeMsg = '';
-				try {
-				   commonCode = CreateObject("component", "cfc.GeonosisCode");
-				} catch(Any e) {
-					err_commonCode = true;
-					err_commonCodeMsg = '(1) The commonCode component has NOT been created.';
-					writeOutput('<font color="red"><b>#err_commonCodeMsg#</b></font><br>');
-				}
-				if (err_commonCode) {
-					commonCode.cf_log(Application.applicationname, 'Error', '[#err_commonCodeMsg#]');
-				} else {
-					errorExplanation = commonCode.explainErrorWithStack(Exception, false);
-				}
+			var _db = '';
+			var ar = -1;
+			var i = -1;
+			var n = -1;
+			var t = -1;
+
+			err_ajaxCode = false;
+			err_ajaxCodeMsg = '';
+			try {
+				Request.commonCode = CreateObject("component", "cfc.cfajaxCode");
+			} catch(Any e) {
+				Request.commonCode = -1;
+				err_ajaxCode = true;
+				err_ajaxCodeMsg = '(1) The ajaxCode component has NOT been created.';
+				writeOutput('<font color="red"><b>#err_ajaxCodeMsg#</b></font><br>');
+				writeOutput(explainErrorWithStack(e, false));
 			}
-		//	writeOutput(commonCode.cf_dump(Exception, 'Exception - [#EventName#]', false));
-		//	html_errorExplanation = commonCode.explainError(Exception, false);
+			if (err_ajaxCode) {
+				if (IsStruct(Request.commonCode)) Request.commonCode.cf_log(Application.applicationname, 'Error', '[#err_ajaxCodeMsg#]');
+			}
+
+			if (IsStruct(Request.commonCode)) errorExplanation = Request.commonCode.explainErrorWithStack(Exception, false);
+			
 			if ( (Len(Trim(EventName)) gt 0) AND (Len(Trim(errorExplanation)) gt 0) ) {
-				commonCode.cf_log(Application.applicationname, 'Error', '[#EventName#] [#errorExplanation#]');
+				if (IsStruct(Request.commonCode)) Request.commonCode.cf_log(Application.applicationname, 'Error', '[#EventName#] [#errorExplanation#]');
 			}
 
 			if (NOT ( (EventName IS "onSessionEnd") OR (EventName IS "onApplicationEnd") ) ) {
-				writeOutput('<h2>An unexpected error occurred.</h2>');
-				writeOutput('<p>Error Event: #EventName#</p>');
-				writeOutput('<p>Error details:<br>');
-				if (FindNoCase("DEEPSPACENINE", CGI.SERVER_NAME) gt 0) {
-					commonCode.cf_dump(Exception, EventName, false);
+				if (1) {
+					_db = "An unexpected error occurred. (+++)" & Chr(13);
+					_db = _db & "Error Event: #EventName#" & Chr(13);
+					_db = _db & "Error details:" & Chr(13);
+
+					if (FindNoCase("laptop.halsmalltalker.com", CGI.SERVER_NAME) gt 0) {
+						if (IsStruct(Request.commonCode)) _db = _db & Request.commonCode.explainErrorWithStack(Exception, false) & Chr(13);
+					} else {
+						if (IsStruct(Request.commonCode)) _db = _db & Request.commonCode.explainErrorWithStack(Exception, false) & Chr(13);
+					}
+					writeOutput('<script language="JavaScript1.2" type="text/javascript">');
+					ar = ListToArray(_db, Chr(13));
+					n = ArrayLen(ar);
+					for (i = 1; i lte n; i = i + 1) {
+						t = Replace(Replace(ar[i], '"', "'", 'all'), Chr(10), '', 'all');
+						writeOutput('if (!!_alert) _alert("#t#"); else alert("Error - Missing function named (_alert)."); ');
+					}
+					writeOutput('</script>');
 				} else {
-					writeOutput(explainErrorWithStack(Exception, true));
+					writeOutput('<h2>An unexpected error occurred. (+++)</h2>');
+					writeOutput('<p>Error Event: #EventName#</p>');
+					writeOutput('<p>Error details:<br>');
+					if (FindNoCase("laptop.halsmalltalker.com", CGI.SERVER_NAME) gt 0) {
+					//	if (IsStruct(Request.commonCode)) Request.commonCode.cf_dump(Exception, EventName, false);
+						if (IsStruct(Request.commonCode)) writeOutput(Request.commonCode.explainErrorWithStack(Exception, false));
+					} else {
+						if (IsStruct(Request.commonCode)) writeOutput(Request.commonCode.explainErrorWithStack(Exception, false));
+					}
 				}
 			}
-		}
+	   </cfscript>
+	</cffunction>
 
-		function onSessionStart() {
-			try {
-				Session.started = now();
-				if (NOT IsDefined("Application.sessions")) {
-					Application.sessions = 0;
-				}
-				Application.sessions = Application.sessions + 1;
-			} catch (Any e) {
-			}
-		}
+	<cffunction name="onSessionStart">
+	   <cfscript>
+	      Session.started = now();
+	      Session.shoppingCart = StructNew();
+	      Session.shoppingCart.items =0;
+	   </cfscript>
+	      <cflock scope="Application" timeout="5" type="Exclusive">
+	         <cfset Application.sessions = Application.sessions + 1>
+	   </cflock>
+		<cflog file="#Application.applicationName#" type="Information" text="Session #Session.sessionid# started. Active sessions: #Application.sessions#">
+	</cffunction>
 
-		function onSessionEnd(SessionScope,ApplicationScope) {
-			try {
-				SessionScope.ended = now();
-				SessionScope.sessionLength = -1;
-				if (IsDefined("SessionScope.started")) {
-					SessionScope.sessionLength = TimeFormat(SessionScope.ended - SessionScope.started, "H:mm:ss");
-				}
-				if (NOT IsDefined("Application.sessions")) {
-					Application.sessions = 0;
-				}
-				Application.sessions = Application.sessions - 1;
-				cf_log('Session #SessionScope.sessionid# ended. Length: #SessionScope.sessionLength# Active sessions: #Application.sessions#');
-			} catch (Any e) {
-			}
-		}
-
-	</cfscript>
-
-	<cffunction name="onApplicationStart" access="public">
-		<cftry>
-			<!--- Test whether the DB is accessible by selecting some data. --->
-			<cfquery name="testDB" dataSource="#GetToken(this.const_SQL_DSNs, this.count_SQL_DSNs, ",")#">
-				SELECT TOP 1 * FROM objects
-			</cfquery>
-			<!--- If we get a database error, report an error to the user, log the
-			      error information, and do not start the application. --->
-			<cfcatch type="database">
-				<cflog file="#This.Name#" type="error" text="(_onApplicationStart.1) #GetToken(this.const_SQL_DSNs, this.count_SQL_DSNs, ",")# DSN is not available. message: #cfcatch.message# Detail: #cfcatch.detail# Native Error: #cfcatch.NativeErrorCode#" >
-				<cfset this.count_SQL_DSNs = this.count_SQL_DSNs + 1>
-				<cfif (this.count_SQL_DSNs gt ListLen(this.const_SQL_DSNs, ","))>
-					<cfset this.count_SQL_DSNs = ListLen(this.const_SQL_DSNs, ",")>
-				<cfelse>
-					<cftry>
-						<!--- Test whether the DB is accessible by selecting some data. --->
-						<cfquery name="testDB" dataSource="#GetToken(this.const_SQL_DSNs, this.count_SQL_DSNs, ",")#">
-							SELECT TOP 1 * FROM objects
-						</cfquery>
-						<!--- If we get a database error, report an error to the user, log the
-						      error information, and do not start the application. --->
-						<cfcatch type="database">
-							<cfoutput>
-								This application encountered an error<br>
-								Unable to use the ColdFusion Data Source(s) named "#this.const_SQL_DSNs#"<br>
-								Please contact support.
-							</cfoutput>
-							<cflog file="#This.Name#" type="error" text="(_onApplicationStart.2) #GetToken(this.const_SQL_DSNs, this.count_SQL_DSNs, ",")# DSN is not available. message: #cfcatch.message# Detail: #cfcatch.detail# Native Error: #cfcatch.NativeErrorCode#" >
-							<cfreturn False>
-						</cfcatch>
-					</cftry>
-				</cfif>
-			</cfcatch>
-		</cftry>
-
-		<cflock timeout="60" throwontimeout="No" type="EXCLUSIVE" scope="APPLICATION">
-			<cfscript>
-				Application.DSN = GetToken(this.const_SQL_DSNs, this.count_SQL_DSNs, ",");
-			</cfscript>
+	<cffunction name="onSessionEnd">
+		<cfargument name = "SessionScope" required=true/>
+		<cfargument name = "AppScope" required=true/>
+	
+		<cfset var sessionLength = TimeFormat(Now() - SessionScope.started, "H:mm:ss")>
+		<cflock name="AppLock" timeout="5" type="Exclusive">
+			<cfif (NOT IsDefined("Arguments.AppScope.sessions"))>
+				<cfset ApplicationScope.sessions = 0>
+			</cfif>
+			<cfset Arguments.AppScope.sessions = Arguments.AppScope.sessions - 1>
 		</cflock>
 
-		<cflog file="#This.Name#" type="Information" text="(_onApplicationStart.3) Application Started !">
+		<cflog file="#Arguments.AppScope.applicationName#" type="Information" text="Session #Arguments.SessionScope.sessionid# ended. Length: #sessionLength# Active sessions: #Arguments.AppScope.sessions#">
+	</cffunction>
+
+	<cffunction name="onApplicationStart" access="public">
+		<cfif 0>
+			<cftry>
+				<!--- Test whether the DB is accessible by selecting some data. --->
+				<cfquery name="testDB" dataSource="#Request.INTRANET_DS#">
+					SELECT TOP 1 * FROM AvnUsers
+				</cfquery>
+				<!--- If we get a database error, report an error to the user, log the
+				      error information, and do not start the application. --->
+				<cfcatch type="database">
+					<cfoutput>
+						This application encountered an error<br>
+						Unable to use the ColdFusion Data Source named "#Request.INTRANET_DS#"<br>
+						Please contact support.
+					</cfoutput>
+					<cflog file="#This.Name#" type="error" text="#Request.INTRANET_DS# DSN is not available. message: #cfcatch.message# Detail: #cfcatch.detail# Native Error: #cfcatch.NativeErrorCode#" >
+					<cfreturn False>
+				</cfcatch>
+			</cftry>
+		</cfif>
+
+		<cflog file="#This.Name#" type="Information" text="Application Started">
 		<!--- You do not have to lock code in the onApplicationStart method that sets
 		      Application scope variables. --->
 		<cfscript>
 			Application.sessions = 0;
+			Application.DSN = ListFirst(this.const_SQL_DSNs, ',');
 		</cfscript>
 		<cfreturn True>
 	</cffunction>
 
 	<cffunction name="onApplicationEnd" access="public">
 		<cfargument name="ApplicationScope" required=true/>
-		<cflog file="#This.Name#" type="Information" text="(_onApplicationEnd.1) Application #Arguments.ApplicationScope.applicationname# Ended" >
-	</cffunction>
-
-	<cffunction name="_onSessionEnd" access="private">
-		<cfargument name = "SessionScope" required=true/>
-		<cfargument name = "AppScope" required=true/>
-
-		<cfset var sessionLength = TimeFormat(Now() - SessionScope.started, "H:mm:ss")>
-		<cflock name="AppLock" timeout="5" type="Exclusive">
-			<cfset Arguments.AppScope.sessions = Arguments.AppScope.sessions - 1>
-		</cflock>
-
-		<cflog file="#This.Name#" type="Information" text="(_onSessionEnd.1) Session #Arguments.SessionScope.sessionid# ended. Length: #sessionLength# Active sessions: #Arguments.AppScope.sessions# [Client.bool_isUserLoggedIn=(#Client.bool_isUserLoggedIn#)],  [Client.userNameLoggedIn=(#Client.userNameLoggedIn#)]">
-
-		<cfscript>
-			Client.bool_isUserLoggedIn = false;
-			Client.userNameLoggedIn = '';
-		</cfscript>
+		<cflog file="#This.Name#" type="Information" text="Application #Arguments.ApplicationScope.applicationname# Ended" >
 	</cffunction>
 
 	<cffunction name="onRequestStart" access="public">
@@ -202,6 +198,12 @@
 		<cflock timeout="60" throwontimeout="No" type="EXCLUSIVE" scope="APPLICATION">
 			<cfscript>
 				Request.DSN = Application.DSN;
+				
+				if (Len(Request.DSN) eq 0) {
+					Application.DSN = GetProfileString(iniPath, CGI.SERVER_NAME, 'DSN');
+					
+					Request.DSN = Application.DSN;
+				}
 			</cfscript>
 		</cflock>
 <!--- +++ --->
@@ -264,7 +266,7 @@
 
 					Request.const_local_ip_address = Request.commonCode.getResourceByNameWithDefault('const_local_ip_address', '192.168.');
 
-					Request.const_local_server_name = Request.commonCode.getResourceByNameWithDefault('const_local_server_name', 'DeepSpaceNine');
+					Request.const_local_server_name = Request.commonCode.getResourceByNameWithDefault('const_local_server_name', 'laptop.halsmalltalker.com');
 					
 					if (0) {
 						xxx = Request.commonCode.num2hex(Request.const_maxint_value);
@@ -341,10 +343,5 @@
 
 	<cffunction name="onRequestEnd" access="public">
 		<cfargument name = "_targetPage" required=true/>
-
-		<cfif Request.allow_Logging>
-			<cflog file="#This.Name#" type="Information" text="(_onRequestEnd.1) [_targetPage=#_targetPage#]">
-		</cfif>
-
 	</cffunction>
 </cfcomponent>

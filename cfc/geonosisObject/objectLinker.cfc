@@ -40,7 +40,7 @@
 					}
 
 					function objectLinker_getGUIObjectInstanceById(id) {
-						return getGUIObjectInstanceById(id);
+						return $(id);
 					}
 
 					function objectLinker_getSelectionsFromObj(obj) {
@@ -173,7 +173,7 @@
 						<cfscript>
 							_nonZeroCount = 0;
 							Request.commonCode.safely_execSQL('Request.qGetObjectTypes', Request.DSN, this.sql_qGetObjectTypes);
-							if ( (NOT Request.dbError) AND (IsDefined("Request.qGetObjectTypes")) ) {
+							if ( (NOT Request.dbError) AND (IsDefined("Request.qGetObjectTypes")) AND (IsDefined("Request.qGetObjectTypes.recordCount")) ) {
 								_maxLen = 0;
 								for (i = 1; i lte Request.qGetObjectTypes.recordCount; i = i + 1) {
 									_maxLen = Max(_maxLen, Len(Request.qGetObjectTypes.className[i]));
@@ -183,18 +183,20 @@
 								}
 							}
 						</cfscript>
-						<select id="validTypes" name="validTypes" class="textClass" multiple size="#Min(_nonZeroCount, Request.qGetObjectTypes.recordCount)#" onchange="objectLinker_chooseObjectType(this); return false;">
-							<cfscript>
-								if ( (NOT Request.dbError) AND (IsDefined("Request.qGetObjectTypes")) ) {
-									for (i = 1; i lte Request.qGetObjectTypes.recordCount; i = i + 1) {
-										_selectedParm = '';
-										if (Request.qGetObjectTypes.cnt[i] gt 0) {
-											writeOutput('<option value="#Request.qGetObjectTypes.objectClassID[i]#"#_selectedParm#>#Request.qGetObjectTypes.className[i]#</option>');
+						<cfif (IsDefined("Request.qGetObjectTypes.recordCount"))>
+							<select id="validTypes" name="validTypes" class="textClass" multiple size="#Min(_nonZeroCount, Request.qGetObjectTypes.recordCount)#" onchange="objectLinker_chooseObjectType(this); return false;">
+								<cfscript>
+									if ( (NOT Request.dbError) AND (IsDefined("Request.qGetObjectTypes")) ) {
+										for (i = 1; i lte Request.qGetObjectTypes.recordCount; i = i + 1) {
+											_selectedParm = '';
+											if (Request.qGetObjectTypes.cnt[i] gt 0) {
+												writeOutput('<option value="#Request.qGetObjectTypes.objectClassID[i]#"#_selectedParm#>#Request.qGetObjectTypes.className[i]#</option>');
+											}
 										}
 									}
-								}
-							</cfscript>
-						</select>
+								</cfscript>
+							</select>
+						</cfif>
 					</div>
 				</div>
 				<div id="div_abstract_objectPickerChooseObjects" style="display: inline;">
@@ -315,9 +317,15 @@
 											</td>
 											<td align="left">
 												<cfscript>
-													metrics = fieldMetricsFromQuery(Request.qGetDbSchemaForOwnerPropertyName);
+													if (IsDefined("Request.qGetDbSchemaForOwnerPropertyName")) {
+														metrics = fieldMetricsFromQuery(Request.qGetDbSchemaForOwnerPropertyName);
+													}
 												</cfscript>
-												<input disabled type="text" name="linkEditorOwnerPropertyName" id="linkEditorOwnerPropertyName" class="textClass" size="#metrics.size#" maxlength="#metrics.maxlength#">
+												<cfif (IsDefined("metrics.size")) AND (IsDefined("metrics.maxlength"))>
+													<input disabled type="text" name="linkEditorOwnerPropertyName" id="linkEditorOwnerPropertyName" class="textClass" size="#metrics.size#" maxlength="#metrics.maxlength#">
+												<cfelse>
+													<font color="red"><b>ERROR: Missing Query named "Request.qGetDbSchemaForOwnerPropertyName".</b></font>
+												</cfif>
 											</td>
 										</tr>
 										<tr>
@@ -326,9 +334,15 @@
 											</td>
 											<td align="left">
 												<cfscript>
-													metrics = fieldMetricsFromQuery(Request.qGetDbSchemaForRelatedPropertyName);
+													if (IsDefined("Request.qGetDbSchemaForRelatedPropertyName")) {
+														metrics = fieldMetricsFromQuery(Request.qGetDbSchemaForRelatedPropertyName);
+													}
 												</cfscript>
-												<input disabled type="text" name="linkEditorRelatedPropertyName" id="linkEditorRelatedPropertyName" class="textClass" size="#metrics.size#" maxlength="#metrics.maxlength#">
+												<cfif (IsDefined("metrics.size")) AND (IsDefined("metrics.maxlength"))>
+													<input disabled type="text" name="linkEditorRelatedPropertyName" id="linkEditorRelatedPropertyName" class="textClass" size="#metrics.size#" maxlength="#metrics.maxlength#">
+												<cfelse>
+													<font color="red"><b>ERROR: Missing Query named "Request.qGetDbSchemaForRelatedPropertyName".</b></font>
+												</cfif>
 											</td>
 										</tr>
 										<tr>
@@ -337,9 +351,15 @@
 											</td>
 											<td align="left">
 												<cfscript>
-													metrics = fieldMetricsFromQuery(Request.qGetDbSchemaForOwnerAutoload);
+													if (IsDefined("Request.qGetDbSchemaForOwnerAutoload")) {
+														metrics = fieldMetricsFromQuery(Request.qGetDbSchemaForOwnerAutoload);
+													}
 												</cfscript>
-												<input disabled type="text" name="linkEditorOwnerAutoload" id="linkEditorOwnerAutoload" class="textClass" size="#metrics.size#" maxlength="#metrics.maxlength#">
+												<cfif (IsDefined("metrics.size")) AND (IsDefined("metrics.maxlength"))>
+													<input disabled type="text" name="linkEditorOwnerAutoload" id="linkEditorOwnerAutoload" class="textClass" size="#metrics.size#" maxlength="#metrics.maxlength#">
+												<cfelse>
+													<font color="red"><b>ERROR: Missing Query named "Request.qGetDbSchemaForOwnerAutoload".</b></font>
+												</cfif>
 											</td>
 										</tr>
 										<tr>
@@ -348,9 +368,15 @@
 											</td>
 											<td align="left">
 												<cfscript>
-													metrics = fieldMetricsFromQuery(Request.qGetDbSchemaForRelatedAutoload);
+													if (IsDefined("Request.qGetDbSchemaForRelatedAutoload")) {
+														metrics = fieldMetricsFromQuery(Request.qGetDbSchemaForRelatedAutoload);
+													}
 												</cfscript>
-												<input disabled type="text" name="linkEditorRelatedAutoload" id="linkEditorRelatedAutoload" class="textClass" size="#metrics.size#" maxlength="#metrics.maxlength#">
+												<cfif (IsDefined("metrics.size")) AND (IsDefined("metrics.maxlength"))>
+													<input disabled type="text" name="linkEditorRelatedAutoload" id="linkEditorRelatedAutoload" class="textClass" size="#metrics.size#" maxlength="#metrics.maxlength#">
+												<cfelse>
+													<font color="red"><b>ERROR: Missing Query named "Request.qGetDbSchemaForRelatedAutoload".</b></font>
+												</cfif>
 											</td>
 										</tr>
 										<tr>
@@ -359,9 +385,15 @@
 											</td>
 											<td align="left">
 												<cfscript>
-													metrics = fieldMetricsFromQuery(Request.qGetDbSchemaForDisplayOrder);
+													if (IsDefined("Request.qGetDbSchemaForDisplayOrder")) {
+														metrics = fieldMetricsFromQuery(Request.qGetDbSchemaForDisplayOrder);
+													}
 												</cfscript>
-												<input disabled type="text" name="linkEditorDisplayOrder" id="linkEditorDisplayOrder" class="textClass" size="#metrics.size#" maxlength="#metrics.maxlength#">
+												<cfif (IsDefined("metrics.size")) AND (IsDefined("metrics.maxlength"))>
+													<input disabled type="text" name="linkEditorDisplayOrder" id="linkEditorDisplayOrder" class="textClass" size="#metrics.size#" maxlength="#metrics.maxlength#">
+												<cfelse>
+													<font color="red"><b>ERROR: Missing Query named "Request.qGetDbSchemaForDisplayOrder".</b></font>
+												</cfif>
 											</td>
 										</tr>
 										<tr>
@@ -369,10 +401,16 @@
 												<span class="boldPromptTextClass"><NOBR>Start Version:</NOBR></span>
 											</td>
 												<cfscript>
-													metrics = fieldMetricsFromQuery(Request.qGetDbSchemaForStartVersion);
+													if (IsDefined("Request.qGetDbSchemaForStartVersion")) {
+														metrics = fieldMetricsFromQuery(Request.qGetDbSchemaForStartVersion);
+													}
 												</cfscript>
 											<td align="left">
-												<input disabled type="text" name="linkEditorStartVersion" id="linkEditorStartVersion" class="textClass" size="#metrics.size#" maxlength="#metrics.maxlength#">
+												<cfif (IsDefined("metrics.size")) AND (IsDefined("metrics.maxlength"))>
+													<input disabled type="text" name="linkEditorStartVersion" id="linkEditorStartVersion" class="textClass" size="#metrics.size#" maxlength="#metrics.maxlength#">
+												<cfelse>
+													<font color="red"><b>ERROR: Missing Query named "Request.qGetDbSchemaForStartVersion".</b></font>
+												</cfif>
 											</td>
 										</tr>
 										<tr>
@@ -381,9 +419,15 @@
 											</td>
 											<td align="left">
 												<cfscript>
-													metrics = fieldMetricsFromQuery(Request.qGetDbSchemaForLastVersion);
+													if (IsDefined("Request.qGetDbSchemaForLastVersion")) {
+														metrics = fieldMetricsFromQuery(Request.qGetDbSchemaForLastVersion);
+													}
 												</cfscript>
-												<input disabled type="text" name="linkEditorLastVersion" id="linkEditorLastVersion" class="textClass" size="#metrics.size#" maxlength="#metrics.maxlength#">
+												<cfif (IsDefined("metrics.size")) AND (IsDefined("metrics.maxlength"))>
+													<input disabled type="text" name="linkEditorLastVersion" id="linkEditorLastVersion" class="textClass" size="#metrics.size#" maxlength="#metrics.maxlength#">
+												<cfelse>
+													<font color="red"><b>ERROR: Missing Query named "Request.qGetDbSchemaForLastVersion".</b></font>
+												</cfif>
 											</td>
 										</tr>
 										<tr>
@@ -392,9 +436,15 @@
 											</td>
 											<td align="left">
 												<cfscript>
-													metrics = fieldMetricsFromQuery(Request.qGetDbSchemaForCreatedBy);
+													if (IsDefined("Request.qGetDbSchemaForCreatedBy")) {
+														metrics = fieldMetricsFromQuery(Request.qGetDbSchemaForCreatedBy);
+													}
 												</cfscript>
-												<input disabled type="text" name="linkEditorCreatedBy" id="linkEditorCreatedBy" class="textClass" size="#metrics.size#" maxlength="#metrics.maxlength#">
+												<cfif (IsDefined("metrics.size")) AND (IsDefined("metrics.maxlength"))>
+													<input disabled type="text" name="linkEditorCreatedBy" id="linkEditorCreatedBy" class="textClass" size="#metrics.size#" maxlength="#metrics.maxlength#">
+												<cfelse>
+													<font color="red"><b>ERROR: Missing Query named "Request.qGetDbSchemaForCreatedBy".</b></font>
+												</cfif>
 											</td>
 										</tr>
 									</table>

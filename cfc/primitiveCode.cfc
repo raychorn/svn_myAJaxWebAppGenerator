@@ -161,7 +161,7 @@
 				</cfsavecontent>
 				<cfsavecontent variable="Request.verboseErrorMsg">
 					<cfif (IsDefined("Request.bool_show_verbose_SQL_errors"))>
-						<cfif (Request.bool_show_verbose_SQL_errors)>
+						<cfif (Request.bool_show_verbose_SQL_errors) AND 0>
 							<cfdump var="#cfcatch#" label="cfcatch :: Request.isPKviolation = [#Request.isPKviolation#]" expand="No">
 						</cfif>
 					</cfif>

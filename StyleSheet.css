@@ -78,6 +78,10 @@ BODY {
 	font-size: 10px;
 }
 
+.textEntryClass {
+	font-size: 11px;
+}
+
 .workingStatusClass {
 	font-size: 10px;
 	color: black;
@@ -90,5 +94,43 @@ BODY {
 
 .paperBgErrorColorClass {
 	background-color : #FF8080;
+}
+
+.code {
+	font-family: courier;
+	font-size: 11px;
+	color: black;
+	border: solid thin #0000cc;
+	background-color: #ffffcc;
+	overflow: auto;
+	max-height: 200px;
+}
+
+.codePrint {
+	font-family: courier;
+	font-size: 11px;
+	color: black;
+	border: solid thin #0000cc;
+	background-color: #ffffcc;
+}
+
+.codeSmall {
+	font-family: courier;
+	font-size: 10px;
+	color: black;
+	border: solid thin #0000cc;
+	background-color: #ffffcc;
+	overflow: auto;
+	max-height: 200px;
+}
+
+.codeSmaller {
+	font-family: courier;
+	font-size: 8px;
+	color: black;
+	border: solid thin #0000cc;
+	background-color: #ffffcc;
+	overflow: auto;
+	max-height: 400px;
 }
 

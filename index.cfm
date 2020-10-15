@@ -20,7 +20,6 @@
 <html>
 	<head>
 		<script language="JavaScript1.2" src="js/MathAndStringExtend.js" type="text/javascript"></script>
-		<script language="JavaScript1.2" src="js/DHTMLWindows_obj.js" type="text/javascript"></script>
 		<script language="JavaScript1.2" src="js/dictionary_obj.js" type="text/javascript"></script>
 
 		<cfoutput>
@@ -41,6 +40,55 @@
 			<cfif (IsStruct(Request.CommonCode))>
 				#Request.CommonCode.js_daysInMonthForYear#
 			</cfif>
+
+			<script language="JavaScript1.2" type="text/javascript">
+			<!--
+				function _dispaySysMessages(s, t, bool_hideShow, taName) {
+					if (taName.toUpperCase() == 'ta_menuHelperPanel'.toUpperCase()) {
+						var taObj = _$(taName);
+						if (!!taObj) {
+							taObj.value += s;
+						}
+					} else {
+						var cObj = $('div_sysMessages');
+						var tObj = $('span_sysMessages_title');
+						var sObj = $('span_sysMessages_body');
+						var taObj = _$(taName);
+						var s_ta = '';
+						if ( (!!cObj) && (!!sObj) && (!!tObj) ) {
+							bool_hideShow = ((bool_hideShow == true) ? bool_hideShow : false);
+							s_ta = ((!!taObj) ? taObj.value : '');
+							flushGUIObjectChildrenForObj(sObj);
+							sObj.innerHTML = '<textarea id="' + taName + '" class="codeSmaller" cols="150" rows="30" readonly>' + ((s.length > 0) ? s_ta + '\n' : '') + s + '</textarea>';
+							flushGUIObjectChildrenForObj(tObj);
+							tObj.innerHTML = t;
+							cObj.style.display = ((bool_hideShow) ? const_inline_style : const_none_style);
+							cObj.style.position = 'absolute';
+							cObj.style.left = 10 + 'px';
+							cObj.style.top = 10 + 'px';
+							cObj.style.width = (clientWidth() - 10) + 'px';
+							cObj.style.height = (clientHeight() - 10) + 'px';
+						}
+					}
+				}
+				
+				function dispaySysMessages(s, t) {
+					return _dispaySysMessages(s, t, true, 'textarea_sysMessages_body');
+				}
+				
+				function _alert(s) {
+					return dispaySysMessages(s, 'DEBUG');
+				}
+	
+				function dismissSysMessages() {
+					return _dispaySysMessages('', '', false, 'textarea_sysMessages_body');
+				}
+				
+				function _alertM(s) {
+					return _dispaySysMessages('-->' + s + '\n', '', true, 'ta_menuHelperPanel');
+				}
+			//-->
+			</script>
 
 			<script language="JavaScript1.2" type="text/javascript">
 			<!--
@@ -94,11 +142,11 @@
 				function validateEmail(s) {
 					var bool_isEmailAddressValid = isEmailAddressValid(s);
 					if (bool_isEmailAddressValid) {
-						var objUserName = getGUIObjectInstanceById('user_login_UserName');
+						var objUserName = $('user_login_UserName');
 						if (objUserName != null) {
 							objUserName.focus();
 						}
-						var mObj = getGUIObjectInstanceById('span_user_login_status_message');
+						var mObj = $('span_user_login_status_message');
 						if (mObj != null) {
 							flushGUIObjectChildrenForObj(mObj);
 							mObj.innerHTML = 'WARNING: Email address entered is invalid. PLS enter a valid internet email address.';
@@ -108,13 +156,13 @@
 						return false;
 					} else {
 						var bool_isPasswordValid = false;
-						var pObj = getGUIObjectInstanceById('user_login_Password');
+						var pObj = $('user_login_Password');
 						if (pObj != null) {
 							bool_isPasswordValid = isPasswordValid(pObj.value);
 						}
 
 						if (bool_isPasswordValid) {
-							var mObj = getGUIObjectInstanceById('span_user_login_status_message');
+							var mObj = $('span_user_login_status_message');
 							if (mObj != null) {
 								flushGUIObjectChildrenForObj(mObj);
 								mObj.innerHTML = '';
@@ -122,7 +170,7 @@
 							disableWidgetByID('user_login_btn_login', false);
 							return true;
 						} else {
-							var mObj = getGUIObjectInstanceById('span_user_login_status_message');
+							var mObj = $('span_user_login_status_message');
 							if (mObj != null) {
 								flushGUIObjectChildrenForObj(mObj);
 								mObj.innerHTML = 'WARNING: The email address appears to be well-formed however the password must contain the following characters ("a"-"z" or "A"-"Z" and "0"-"9" and any special characters).';
@@ -149,7 +197,7 @@
 						a[i] = aa.join('-');
 					}
 					t = a.join(' ');
-					var cObj = getGUIObjectInstanceById(id);
+					var cObj = $(id);
 					if (cObj != null) {
 						cObj.value = t;
 					}
@@ -179,11 +227,11 @@
 					ratePassword(s, _div_password_rating, _td_password_rating, _span_password_rating);
 					
 					if (bool_isPasswordValid) {
-						var pObj = getGUIObjectInstanceById('user_login_Password');
+						var pObj = $('user_login_Password');
 						if (pObj != null) {
 							pObj.focus();
 						}
-						var mObj = getGUIObjectInstanceById('span_user_login_status_message');
+						var mObj = $('span_user_login_status_message');
 						if (mObj != null) {
 							flushGUIObjectChildrenForObj(mObj);
 							mObj.innerHTML = '#Request.const_password_invalid_warning#';
@@ -194,7 +242,7 @@
 					} else {
 						var bool_isEmailAddressValid = isEmailAddressValid(s);
 						if (bool_isEmailAddressValid) {
-							var mObj = getGUIObjectInstanceById('span_user_login_status_message');
+							var mObj = $('span_user_login_status_message');
 							if (mObj != null) {
 								flushGUIObjectChildrenForObj(mObj);
 								mObj.innerHTML = '';
@@ -202,7 +250,7 @@
 							disableWidgetByID('user_login_btn_login', false);
 							return true;
 						} else {
-							var mObj = getGUIObjectInstanceById('span_user_login_status_message');
+							var mObj = $('span_user_login_status_message');
 							if (mObj != null) {
 								flushGUIObjectChildrenForObj(mObj);
 								mObj.innerHTML = 'WARNING: Email address entered is invalid. PLS enter a valid internet email address.';
@@ -216,11 +264,11 @@
 				function validateEmail2(s) {
 					var bool_isEmailAddressValid = isEmailAddressValid(s);
 					if (bool_isEmailAddressValid) {
-						var objUserName = getGUIObjectInstanceById('user_user_forgot_password_UserName');
+						var objUserName = $('user_user_forgot_password_UserName');
 						if (objUserName != null) {
 							objUserName.focus();
 						}
-						var mObj = getGUIObjectInstanceById('user_user_forgot_password_status_message');
+						var mObj = $('user_user_forgot_password_status_message');
 						if (mObj != null) {
 							flushGUIObjectChildrenForObj(mObj);
 							mObj.innerHTML = 'WARNING: Email address entered is invalid. PLS enter a valid internet email address.';
@@ -229,7 +277,7 @@
 						disableWidgetByID('user_user_forgot_password_btn_getPassword', true);
 						return true;
 					} else {
-						var mObj = getGUIObjectInstanceById('user_user_forgot_password_status_message');
+						var mObj = $('user_user_forgot_password_status_message');
 						if (mObj != null) {
 							flushGUIObjectChildrenForObj(mObj);
 							mObj.innerHTML = '';
@@ -246,7 +294,7 @@
 					var _html = '';
 
 					_html = html_PopulateUserManagerWithUsers(anObject);
-					cObj = getGUIObjectInstanceById('div_userManager_user_grid');
+					cObj = $('div_userManager_user_grid');
 					if (cObj != null) {
 						flushGUIObjectChildrenForObj(cObj);
 						cObj.innerHTML = _html;
@@ -1290,8 +1338,8 @@
 				}
 
 				function dismissLoginForm() {
-					var obj = getGUIObjectInstanceById('div_user_login'); 
-					var oBtn = getGUIObjectInstanceById('btn_user_login'); 
+					var obj = $('div_user_login'); 
+					var oBtn = $('btn_user_login'); 
 					if ( (obj != null) && (oBtn != null) ) { 
 						obj.style.display = const_none_style; 
 						oBtn.disabled = false; 
@@ -1311,12 +1359,12 @@
 
 					disableAllChildrenForObjById('div_user_forgot_password', false);
 
-					var obj = getGUIObjectInstanceById('user_user_forgot_password_UserName'); 
+					var obj = $('user_user_forgot_password_UserName'); 
 					if (obj != null) { 
 						obj.value = ''; 
 						obj.focus(); 
 					}
-					var mObj = getGUIObjectInstanceById('user_user_forgot_password_status_message');
+					var mObj = $('user_user_forgot_password_status_message');
 					if (mObj != null) {
 						flushGUIObjectChildrenForObj(mObj);
 						mObj.innerHTML = '';
@@ -1370,7 +1418,7 @@
 				function performUserLogin(sUserName, sPassword) {
 					disableAllChildrenForObjById('div_user_login', true);
 
-					var mObj = getGUIObjectInstanceById('span_user_login_status_message');
+					var mObj = $('span_user_login_status_message');
 					if (mObj != null) {
 						flushGUIObjectChildrenForObj(mObj);
 						mObj.innerHTML = 'User Log-in BEING PROCESSED - PLS stand-by...';
@@ -1384,7 +1432,7 @@
 
 					disableAllChildrenForObjById('div_user_login', false);
 
-					var mObj = getGUIObjectInstanceById('span_user_login_status_message');
+					var mObj = $('span_user_login_status_message');
 					if (mObj != null) {
 						bool = _handleDetermineUserLogInStateResults(anObject);
 						flushGUIObjectChildrenForObj(mObj);
@@ -1407,7 +1455,7 @@
 
 				function _handlePerformUserLogoffResults(anObject) {
 
-					var obj = getGUIObjectInstanceById('div_user_menu_logoff'); 
+					var obj = $('div_user_menu_logoff'); 
 					if (obj != null) { 
 						obj.style.display = const_none_style; 
 						this.disabled = true; 
@@ -1440,7 +1488,7 @@
 					}
 					disableAllChildrenForObjById('div_user_forgot_password', false);
 
-					var mObj = getGUIObjectInstanceById('user_user_forgot_password_status_message');
+					var mObj = $('user_user_forgot_password_status_message');
 					if (mObj != null) {
 						flushGUIObjectChildrenForObj(mObj);
 						mObj.innerHTML = s_innerHTML;
@@ -1771,8 +1819,8 @@
 					for (var i = 0; i < abstract_to_concrete_mapping.length; i++) {
 						ar = abstract_to_concrete_mapping[i];
 						if (ar.length == 2) {
-							aObj = getGUIObjectInstanceById(ar[0]);
-							cObj = getGUIObjectInstanceById(ar[1]);
+							aObj = $(ar[0]);
+							cObj = $(ar[1]);
 							if ( (aObj != null) && (cObj != null) ) {
 								flushGUIObjectChildrenForObj(cObj);
 								cObj.innerHTML = aObj.innerHTML;
@@ -1786,19 +1834,34 @@
 					abstract_hidden_div_array.push('div_title_ConcreteLayout');
 
 					for (i = 0; i < abstract_hidden_div_array.length; i++) {
-						aObj = getGUIObjectInstanceById(abstract_hidden_div_array[i]);
+						aObj = $(abstract_hidden_div_array[i]);
 						if (aObj != null) {
 							aObj.style.display = const_none_style;
 						}
 					}
 
-					disableAllChildrenForObjById('div_objectPickerObjectLinkEditor', true);
-					
-					disableAllChildrenForObjById('div_objectCreatorMakeAttribute', true);
-					
-					disableAllChildrenForObjById('div_objectCreatorMakeObject', true);
-					
-					var obj = getGUIObjectInstanceById('btn_peformMapping');
+					try {
+						disableAllChildrenForObjById('div_objectPickerObjectLinkEditor', true);
+					} catch(e) {
+						jsErrorExplainer(e, 'A. performAbstract2ConcreteGUIMapping()' + ', (typeof disableAllChildrenForObjById) = [' + (typeof disableAllChildrenForObjById) + ']', true);
+					} finally {
+					}
+
+					try {
+						disableAllChildrenForObjById('div_objectCreatorMakeAttribute', true);
+					} catch(e) {
+						jsErrorExplainer(e, 'B. performAbstract2ConcreteGUIMapping()', true);
+					} finally {
+					}
+
+					try {
+						disableAllChildrenForObjById('div_objectCreatorMakeObject', true);
+					} catch(e) {
+						jsErrorExplainer(e, 'C. performAbstract2ConcreteGUIMapping()', true);
+					} finally {
+					}
+
+					var obj = $('btn_peformMapping');
 					if (obj != null) { 
 						obj.disabled = true;
 					}
@@ -1842,6 +1905,30 @@
 	</head>
 	<cfoutput>
 		<body onLoad="onLoadEventHandler()">
+			<div id="div_sysMessages" style="display: none;">
+				<table width="*" border="1" cellspacing="-1" cellpadding="-1" bgcolor="##FFFF80">
+					<tr>
+						<td>
+							<table width="*" cellspacing="-1" cellpadding="-1">
+								<tr bgcolor="silver">
+									<td align="center">
+										<span id="span_sysMessages_title" class="boldPromptTextClass"></span>
+									</td>
+									<td align="right">
+										<button class="buttonClass" title="Click this button to dismiss this pop-up." onclick="dismissSysMessages(); return false;">[X]</button>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2">
+										<span id="span_sysMessages_body" class="textClass"></span>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</div>
+			
 			<cfif 0>
 				<!--- BEGIN: Test case for data encryption system... --->
 				<cftry>
@@ -1885,24 +1972,26 @@
 							<table width="100%" cellpadding="-1" cellspacing="-1">
 								<tr bgcolor="silver">
 									<td id="div_user_menu_login" style="display: <cfif (IsDefined("Client.bool_isUserLoggedIn"))><cfif (Client.bool_isUserLoggedIn)>none<cfelse>inline</cfif><cfelse>inline</cfif>;">
-										<button id="btn_user_login" class="buttonMenuClass" onclick="var obj = getGUIObjectInstanceById('div_user_login'); if (obj != null) { obj.style.display = const_inline_style; var objUserName = getGUIObjectInstanceById('user_login_UserName'); var objPassword = getGUIObjectInstanceById('user_login_Password'); if ( (objUserName != null) && (objPassword != null) ) { objUserName.value = ''; objUserName.focus(); objPassword.value = ''; }; this.disabled = true; }; return false">[Login]</button>
+										<button id="btn_user_login" class="buttonMenuClass" onclick="var obj = $('div_user_login'); if (obj != null) { obj.style.display = const_inline_style; var objUserName = $('user_login_UserName'); var objPassword = $('user_login_Password'); if ( (objUserName != null) && (objPassword != null) ) { objUserName.value = ''; objUserName.focus(); objPassword.value = ''; }; this.disabled = true; }; return false">[Login]</button>
 									</td>
 									<td id="div_user_menu_userManager" style="display: <cfif (IsDefined("Client.bool_isUserLoggedIn"))><cfif (Client.bool_isUserLoggedIn)>inline<cfelse>none</cfif><cfelse>none</cfif>;">
-										<button id="btn_userManager" class="buttonMenuClass" onclick="var obj = getGUIObjectInstanceById('div_userManager'); if (obj != null) { obj.style.display = const_inline_style; this.disabled = true; addOpenedGUI2Stack(this.id, obj.id); selectionsFirstSelectedById('userManager_UserRole', true); }; return false">[User Manager]</button>
+										<button id="btn_userManager" class="buttonMenuClass" onclick="var obj = $('div_userManager'); if (obj != null) { obj.style.display = const_inline_style; this.disabled = true; addOpenedGUI2Stack(this.id, obj.id); selectionsFirstSelectedById('userManager_UserRole', true); }; return false">[User Manager]</button>
 									</td>
 									<td id="div_user_menu_objectManager" style="display: <cfif (IsDefined("Client.bool_isUserLoggedIn"))><cfif (Client.bool_isUserLoggedIn)>inline<cfelse>none</cfif><cfelse>none</cfif>;">
-										<button id="btn_objectManager" class="buttonMenuClass" onclick="var obj = getGUIObjectInstanceById('div_objectManager'); if (obj != null) { obj.style.display = const_inline_style; this.disabled = true; addOpenedGUI2Stack(this.id, obj.id); }; return false">[Object Manager]</button>
+										<button id="btn_objectManager" class="buttonMenuClass" onclick="var obj = $('div_objectManager'); if (obj != null) { obj.style.display = const_inline_style; this.disabled = true; addOpenedGUI2Stack(this.id, obj.id); }; return false">[Object Manager]</button>
 									</td>
 									<td style="display: inline;">
 										<span class="normalStatusBoldClass">
 										<a href="" onclick="toggleObjectDisplayStyleById('td_toDo_list_body'); return false;">To-Do List</a>
 										</span>
 									</td>
+								<cfif 0>
 									<td style="display: inline;">
 										<span class="normalStatusBoldClass">
 										<a href="http://rayhorn.contentopia.net/rayhorn" target="_blank">[Author's Site]</a>
 										</span>
 									</td>
+								</cfif>
 									<td style="display: inline;">
 										<span class="normalStatusBoldClass">
 										<a href="http://rayhorn.contentopia.net/blog" target="_blank">[Author's Blog]</a>
@@ -1965,10 +2054,10 @@
 																<table width="100%" cellpadding="-1" cellspacing="-1">
 																	<tr>
 																		<td>
-																			<input disabled type="button" name="user_login_btn_login" id="user_login_btn_login" value="[Login]" class="buttonClass" onclick="var objUserName = getGUIObjectInstanceById('user_login_UserName'); var objPassword = getGUIObjectInstanceById('user_login_Password'); if ( (objUserName != null) && (objPassword != null) ) { objUserName.focus(); performUserLogin(objUserName.value, objPassword.value); }; return false;">
+																			<input disabled type="button" name="user_login_btn_login" id="user_login_btn_login" value="[Login]" class="buttonClass" onclick="var objUserName = $('user_login_UserName'); var objPassword = $('user_login_Password'); if ( (objUserName != null) && (objPassword != null) ) { objUserName.focus(); performUserLogin(objUserName.value, objPassword.value); }; return false;">
 																		</td>
 																		<td>
-																			<input type="button" name="user_login_btn_reset" id="user_login_btn_reset" value="[Reset]" class="buttonClass" onclick="var objUserName = getGUIObjectInstanceById('user_login_UserName'); var objPassword = getGUIObjectInstanceById('user_login_Password'); var objBtn = getGUIObjectInstanceById('user_login_btn_login'); if ( (objUserName != null) && (objPassword != null) && (objBtn != null) ) { objUserName.value = ''; objPassword.value = ''; objBtn.disabled = true; objUserName.focus(); }; return false;">
+																			<input type="button" name="user_login_btn_reset" id="user_login_btn_reset" value="[Reset]" class="buttonClass" onclick="var objUserName = $('user_login_UserName'); var objPassword = $('user_login_Password'); var objBtn = $('user_login_btn_login'); if ( (objUserName != null) && (objPassword != null) && (objBtn != null) ) { objUserName.value = ''; objPassword.value = ''; objBtn.disabled = true; objUserName.focus(); }; return false;">
 																		</td>
 																	</tr>
 																</table>
@@ -2088,7 +2177,7 @@
 																							<table width="100%" cellpadding="-1" cellspacing="-1">
 																								<tr>
 																									<td>
-																										<select id="userManagerEditor_BeginDt_MM" name="userManagerEditor_BeginDt_MM" class="textClass" onchange="resetCalendarDaysInMonth('userManagerEditor_BeginDt_', _getSelectionsFromObj(this), _getSelectionsFromObj(getGUIObjectInstanceById('userManagerEditor_BeginDt_YYYY'))); return false;">
+																										<select id="userManagerEditor_BeginDt_MM" name="userManagerEditor_BeginDt_MM" class="textClass" onchange="resetCalendarDaysInMonth('userManagerEditor_BeginDt_', _getSelectionsFromObj(this), _getSelectionsFromObj($('userManagerEditor_BeginDt_YYYY'))); return false;">
 																										</select>
 																									</td>
 																									<td>
@@ -2096,7 +2185,7 @@
 																										</select>
 																									</td>
 																									<td>
-																										<select id="userManagerEditor_BeginDt_YYYY" name="userManagerEditor_BeginDt_YYYY" class="textClass" onchange="resetCalendarDaysInMonth('userManagerEditor_BeginDt_', _getSelectionsFromObj(getGUIObjectInstanceById('userManagerEditor_BeginDt_MM')), _getSelectionsFromObj(this)); return false;">
+																										<select id="userManagerEditor_BeginDt_YYYY" name="userManagerEditor_BeginDt_YYYY" class="textClass" onchange="resetCalendarDaysInMonth('userManagerEditor_BeginDt_', _getSelectionsFromObj($('userManagerEditor_BeginDt_MM')), _getSelectionsFromObj(this)); return false;">
 																										</select>
 																									</td>
 																								</tr>
@@ -2106,7 +2195,7 @@
 																							<table width="100%" cellpadding="-1" cellspacing="-1">
 																								<tr>
 																									<td>
-																										<select id="userManagerEditor_EndDt_MM" name="userManagerEditor_EndDt_MM" class="textClass" onchange="resetCalendarDaysInMonth('userManager_EndDt_', _getSelectionsFromObj(this), _getSelectionsFromObj(getGUIObjectInstanceById('userManager_EndDt_YYYY'))); return false;">
+																										<select id="userManagerEditor_EndDt_MM" name="userManagerEditor_EndDt_MM" class="textClass" onchange="resetCalendarDaysInMonth('userManager_EndDt_', _getSelectionsFromObj(this), _getSelectionsFromObj($('userManager_EndDt_YYYY'))); return false;">
 																										</select>
 																									</td>
 																									<td>
@@ -2114,7 +2203,7 @@
 																										</select>
 																									</td>
 																									<td>
-																										<select id="userManagerEditor_EndDt_YYYY" name="userManagerEditor_EndDt_YYYY" class="textClass" onchange="resetCalendarDaysInMonth('userManager_EndDt_', _getSelectionsFromObj(getGUIObjectInstanceById('userManager_EndDt_MM')), _getSelectionsFromObj(this)); return false;">
+																										<select id="userManagerEditor_EndDt_YYYY" name="userManagerEditor_EndDt_YYYY" class="textClass" onchange="resetCalendarDaysInMonth('userManager_EndDt_', _getSelectionsFromObj($('userManager_EndDt_MM')), _getSelectionsFromObj(this)); return false;">
 																										</select>
 																									</td>
 																								</tr>
@@ -2183,15 +2272,17 @@
 																		Request.commonCode.safely_execSQL('Request.qGetAllRolesForUser', Request.DSN, _sql_statement);
 																	</cfscript>
 	
-																	<select id="userManager_UserRole" name="userManager_UserRole" class="textClass" onchange="chooseUserRole(_getSelectionsFromObj(this), 'userManager_UserRole', 'userManager_addUser'); return false;">
-																		<option value="">#Request.const_Choose_symbol#</option>
-																		<option value="+">#Request.const_AddRole_symbol#</option>
-																		<cfif (IsQuery(Request.qGetAllRolesForUser))>
+																	<cfif (IsDefined("Request.qGetAllRolesForUser")) AND (IsQuery(Request.qGetAllRolesForUser))>
+																		<select id="userManager_UserRole" name="userManager_UserRole" class="textClass" onchange="chooseUserRole(_getSelectionsFromObj(this), 'userManager_UserRole', 'userManager_addUser'); return false;">
+																			<option value="">#Request.const_Choose_symbol#</option>
+																			<option value="+">#Request.const_AddRole_symbol#</option>
 																			<cfloop query="Request.qGetAllRolesForUser" startrow="1" endrow="#Request.qGetAllRolesForUser.recordCount#">
 																				<option value="#Request.qGetAllRolesForUser.ID#">#Request.qGetAllRolesForUser.ROLENAME#</option>
 																			</cfloop>
-																		</cfif>
-																	</select>
+																		</select>
+																	<cfelse>
+																		<font color="red"><b>ERROR: Missing Query named "Request.qGetAllRolesForUser".</b></font>
+																	</cfif>
 																</td>
 																<td align="center">
 																	<span class="normalStatusBoldClass"><i>(Unassigned)</i></span>
@@ -2200,7 +2291,7 @@
 																	<table width="100%" cellpadding="-1" cellspacing="-1">
 																		<tr>
 																			<td>
-																				<select id="userManager_BeginDt_MM" name="userManager_BeginDt_MM" class="textClass" onchange="resetCalendarDaysInMonth('userManager_BeginDt_', _getSelectionsFromObj(this), _getSelectionsFromObj(getGUIObjectInstanceById('userManager_BeginDt_YYYY'))); return false;">
+																				<select id="userManager_BeginDt_MM" name="userManager_BeginDt_MM" class="textClass" onchange="resetCalendarDaysInMonth('userManager_BeginDt_', _getSelectionsFromObj(this), _getSelectionsFromObj($('userManager_BeginDt_YYYY'))); return false;">
 																					<option value="">---</option>
 																					<cfloop index="_iMonth_" from="1" to="12">
 																						<cfset _selected = "">
@@ -2224,7 +2315,7 @@
 																				</select>
 																			</td>
 																			<td>
-																				<select id="userManager_BeginDt_YYYY" name="userManager_BeginDt_YYYY" class="textClass" onchange="resetCalendarDaysInMonth('userManager_BeginDt_', _getSelectionsFromObj(getGUIObjectInstanceById('userManager_BeginDt_MM')), _getSelectionsFromObj(this)); return false;">
+																				<select id="userManager_BeginDt_YYYY" name="userManager_BeginDt_YYYY" class="textClass" onchange="resetCalendarDaysInMonth('userManager_BeginDt_', _getSelectionsFromObj($('userManager_BeginDt_MM')), _getSelectionsFromObj(this)); return false;">
 																					<option value="">----</option>
 																					<cfloop index="_iYear_" from="#Year(Now())#" to="#(Year(Now()) + 5)#">
 																						<cfset _selected = "">
@@ -2242,7 +2333,7 @@
 																	<table width="100%" cellpadding="-1" cellspacing="-1">
 																		<tr>
 																			<td>
-																				<select id="userManager_EndDt_MM" name="userManager_EndDt_MM" class="textClass" onchange="resetCalendarDaysInMonth('userManager_EndDt_', _getSelectionsFromObj(this), _getSelectionsFromObj(getGUIObjectInstanceById('userManager_EndDt_YYYY'))); return false;">
+																				<select id="userManager_EndDt_MM" name="userManager_EndDt_MM" class="textClass" onchange="resetCalendarDaysInMonth('userManager_EndDt_', _getSelectionsFromObj(this), _getSelectionsFromObj($('userManager_EndDt_YYYY'))); return false;">
 																					<option selected value="">---</option>
 																					<cfloop index="_iMonth_" from="1" to="12">
 																						<cfset _selected = "">
@@ -2260,7 +2351,7 @@
 																				</select>
 																			</td>
 																			<td>
-																				<select id="userManager_EndDt_YYYY" name="userManager_EndDt_YYYY" class="textClass" onchange="resetCalendarDaysInMonth('userManager_EndDt_', _getSelectionsFromObj(getGUIObjectInstanceById('userManager_EndDt_MM')), _getSelectionsFromObj(this)); return false;">
+																				<select id="userManager_EndDt_YYYY" name="userManager_EndDt_YYYY" class="textClass" onchange="resetCalendarDaysInMonth('userManager_EndDt_', _getSelectionsFromObj($('userManager_EndDt_MM')), _getSelectionsFromObj(this)); return false;">
 																					<option selected value="">----</option>
 																					<cfloop index="_iYear_" from="#Year(Now())#" to="#(Year(Now()) + 5)#">
 																						<cfset _selected = "">
@@ -2322,21 +2413,18 @@
 													<input type="button" name="rolesManager_addRole" id="rolesManager_addRole" value="[>>]" class="buttonMenuClass" onclick="addNewRole2RoleManager(DWRUtil.getValue('rolesManager_RoleName')); return false;">
 													<br>
 													<cfset _disabled = "">
-													<cfif 0>
-														<cfif (Request.qGetAllRolesForUser.recordCount eq 0)>
-															<cfset _disabled = " disabled">
-														</cfif>
-													</cfif>
 													<input#_disabled# type="button" name="rolesManager_removeRole" id="rolesManager_removeRole" value="[<<]" class="buttonMenuClass" onclick="removeRoleFromRoleManager(_getSelectionsFromObjByID('rolesManager_CurrentRoles')); return false;">
 												</td>
 												<td>
-													<select id="rolesManager_CurrentRoles" name="rolesManager_CurrentRoles" class="textClass" size="10" onfocus="handleEvents_forRolesManager_CurrentRoles(this); return true;" onchange="handleEvents_forRolesManager_CurrentRoles(this); return true;">
-														<cfif (IsQuery(Request.qGetAllRolesForUser))>
+													<cfif (IsDefined("Request.qGetAllRolesForUser")) AND (IsQuery(Request.qGetAllRolesForUser))>
+														<select id="rolesManager_CurrentRoles" name="rolesManager_CurrentRoles" class="textClass" size="10" onfocus="handleEvents_forRolesManager_CurrentRoles(this); return true;" onchange="handleEvents_forRolesManager_CurrentRoles(this); return true;">
 															<cfloop query="Request.qGetAllRolesForUser" startrow="1" endrow="#Request.qGetAllRolesForUser.recordCount#">
 																<option value="#Request.qGetAllRolesForUser.ID#">#Request.qGetAllRolesForUser.ROLENAME#</option>
 															</cfloop>
-														</cfif>
-													</select>
+														</select>
+													<cfelse>
+														<font color="red"><b>ERROR: Missing Query named "Request.qGetAllRolesForUser".</b></font>
+													</cfif>
 												</td>
 											</tr>
 										</table>
@@ -2387,7 +2475,7 @@
 														</tr>
 														<tr>
 															<td colspan="2">
-																<input disabled type="button" name="user_user_forgot_password_btn_getPassword" id="user_user_forgot_password_btn_getPassword" value="[Give Me My Password]" class="buttonClass" onclick="var objUserName = getGUIObjectInstanceById('user_user_forgot_password_UserName'); if (objUserName != null) { performRetrievePassword(objUserName.value); }; return false;">
+																<input disabled type="button" name="user_user_forgot_password_btn_getPassword" id="user_user_forgot_password_btn_getPassword" value="[Give Me My Password]" class="buttonClass" onclick="var objUserName = $('user_user_forgot_password_UserName'); if (objUserName != null) { performRetrievePassword(objUserName.value); }; return false;">
 															</td>
 														</tr>
 													</table>
@@ -2676,19 +2764,38 @@
 					</tr>
 				</table>
 			</div>
+			
+			<table width="100%" cellpadding="-1" cellspacing="-1">
+				<tr>
+					<td id="td_ajaxHelperPanel2" align="center" style="display: inline;">
+						<table width="100%" border="1" bgcolor="##80FFFF" cellspacing="-1" cellpadding="-1" id="table_ajaxHelperPanel2" style="width: 800px;">
+							<tr>
+								<td align="center">
+									<div id="div_application_debug_panel">
+										<table width="100%" cellpadding="-1" cellspacing="-1">
+											<tr>
+												<td align="left" valign="top">
+													<cfdump var="#Application#" label="Application Scope" expand="No">
+												</td>
+												<td align="left" valign="top">
+													<cfdump var="#Session#" label="Session Scope" expand="No">
+												</td>
+												<td align="left" valign="top">
+													<cfdump var="#CGI#" label="CGI Scope" expand="No">
+												</td>
+												<td align="left" valign="top">
+													<cfdump var="#Request#" label="Request Scope" expand="No">
+												</td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
 
-			<script language="JavaScript1.2" type="text/javascript">
-			<!--
-				var aDHTMLObj1 = DHTMLWindowsObj.getInstance();
-			//	alert(aDHTMLObj1);
-			//	aDHTMLObj1._imagePath = '../' + aDHTMLObj1._imagePath;
-				var aDHTMLObj2 = DHTMLWindowsObj.getInstance();
-			//	aDHTMLObj2._imagePath = '../' + aDHTMLObj2._imagePath;
-				var t = aDHTMLObj1.asHTML() + aDHTMLObj2.asHTML();
-			//	alert(aDHTMLObj1.toString() + '\n' + t);
-				document.write(t);
-			// --> 
-			</script>
 		</body>
 	</cfoutput>
 </html>

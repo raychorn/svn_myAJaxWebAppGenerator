@@ -1,4 +1,4 @@
-# myAJaxWebAppGenerator 1.0
+# myAJaxWebAppGenerator 1.0.1
 
 ## Table of Contents
 

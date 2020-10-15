@@ -59,11 +59,11 @@ function isPasswordValid(s) {
 function ratePassword(s, _div_password_rating, _td_password_rating, _span_password_rating) {
 	var bool_isPasswordValid = isPasswordValid(s);
 	var ap = -1;
-	var cObj1 = getGUIObjectInstanceById('user_user_change_password_newPassword');
-	var cObj2 = getGUIObjectInstanceById('user_user_change_password_confirmPassword');
+	var cObj1 = $('user_user_change_password_newPassword');
+	var cObj2 = $('user_user_change_password_confirmPassword');
 
-	var cObj = getGUIObjectInstanceById(_span_password_rating);
-	var tdObj = getGUIObjectInstanceById(_td_password_rating);
+	var cObj = $(_span_password_rating);
+	var tdObj = $(_td_password_rating);
 
 	if (bool_isPasswordValid) {
 		// rate the password...
